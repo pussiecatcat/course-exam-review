@@ -1,0 +1,23 @@
+{
+  "course": "无线通信",
+  "exam_date": "2026-11-05",
+  "today": "2026-10-28",
+  "daily_hours": 3,
+  "exam_type": "closed-book",
+  "question_types": ["选择", "计算", "简答"],
+  "scope": "第 2–4 讲；第 5 讲不考",
+  "emphasized": [
+    "路径损耗拟合（Example 2.3/2.4）",
+    "中断概率与小区覆盖",
+    "多普勒频移计算"
+  ],
+  "materials": {
+    "homework": ["HW2", "HW3"],
+    "past_exams": ["2024 秋期中", "2023 秋期末"]
+  },
+  "notes": "老师明确说 Example 2.3/2.4 会考；第 3 讲只考计算。",
+  "assumptions": [
+    "考试日期与每日时长由用户提供",
+    "开闭卷未说明时按闭卷准备，但不据此删减内容"
+  ]
+}

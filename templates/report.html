@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><!--TITLE--></title>
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="brand">
+    <div class="brand-kicker">COURSE REVIEW</div>
+    <div class="brand-title"><!--COURSE--></div>
+    <div class="brand-sub"><!--SUBTITLE--></div>
+  </div>
+
+  <div class="search-wrap">
+    <input id="search" type="search" placeholder="搜索章节 / 知识点…" autocomplete="off" aria-label="搜索">
+    <kbd>/</kbd>
+  </div>
+
+  <nav class="toc" id="toc" aria-label="目录"><!--TOC--></nav>
+
+  <div class="side-footer">
+    <div class="side-actions">
+      <button id="print-btn" type="button">打印 / 导出 PDF</button>
+      <button id="answers-btn" type="button">展开全部答案</button>
+    </div>
+    <div class="side-meta"><!--SIDE_META--></div>
+  </div>
+</aside>
+
+<main class="main">
+  <article class="content" id="content">
+    <!--COVER-->
+    <!--EXAM_MAP-->
+    <!--CONTENT-->
+    <footer class="doc-footer">
+      <div>本讲义由课程课件与课程资料整理，页脚页码对应原始 PPT。</div>
+      <div>复习顺序建议：考试地图 → 每节结论 → 公式 → 例题 → 自测。</div>
+    </footer>
+  </article>
+</main>
+
+<button class="to-top" id="to-top" type="button" title="回到顶部" aria-label="回到顶部">↑</button>
+
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/contrib/auto-render.min.js"></script>
+<script>
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: "$$", right: "$$", display: true},
+      {left: "\\[", right: "\\]", display: true},
+      {left: "$", right: "$", display: false},
+      {left: "\\(", right: "\\)", display: false}
+    ],
+    ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"],
+    throwOnError: false,
+    strict: false,
+    trust: true
+  });
+</script>
+<script src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+id,title,section,priority,in_scope,depends_on,est_hours,source
+KP01,路径损耗模型,2.2-2.3,A,true,,1.5,PPT p.2-5
+KP02,阴影衰落与对数正态,2.4,A,true,KP01,1.0,PPT p.6; 笔记 §3
+KP03,合并模型,2.5,A,true,KP02,0.8,笔记 §4
+KP04,例 2.3 拟合 gamma,2.6,A,true,KP01,1.0,PPT p.8-9
+KP05,例 2.4 估计 sigma,2.7,A,true,KP04,0.8,PPT p.10
+KP06,中断概率,2.8,A,true,KP03,1.2,PPT p.11; 笔记 §5
+KP07,小区覆盖面积,2.9,B,true,KP06,0.8,PPT p.11; 笔记 §6
+KP08,mmWave 测量与射线追踪,2.10,C,false,,0.3,PPT p.2-5
+KP09,人体遮挡,2.11,C,true,,0.3,PPT p.6-7
+KP10,"时变信道 h(t,tau)",3.2,A,true,,1.0,PPT p.2
+KP11,多普勒频移,3.3,A,true,KP10,1.0,PPT p.2-3
+KP12,多普勒雷达,3.4,B,true,KP11,0.8,PPT p.4
+KP13,相干时间,3.5,B,true,KP11,0.6,PPT p.2
