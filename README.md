@@ -7,11 +7,16 @@
 不是“把 PPT 压缩一遍”，而是按考试的方式重新组织：**哪些必须背、公式怎么来的、例题怎么下手、哪里最容易错、还剩几天怎么安排。**
 
 <p align="center">
-  <img src="docs/preview-pdf.png" width="49%" alt="Generated A4 lecture notes: chapter page and worked example with figure">
-  <img src="docs/preview-html.png" width="49%" alt="Offline HTML review site with sidebar, search and exam map">
+  <img src="docs/preview-pdf.png" width="94%" alt="Generated A4 lecture notes: chapter page and worked example with figure">
 </p>
 
-<p align="center"><sub>左：生成的 A4 讲义（章节页 + 例题/图表页）；右：离线网页（侧栏目录、搜索、考试地图）。</sub></p>
+<p align="center"><sub>生成的 A4 讲义：左为章节页（优先级、前置知识、前后章联系、公式表），右为例题/图表页（公式、例题、路径损耗曲线、易错点、来源）。</sub></p>
+
+<p align="center">
+  <img src="docs/preview-html.png" width="94%" alt="Offline HTML review site with sidebar, search and exam map">
+</p>
+
+<p align="center"><sub>离线网页：侧栏目录、搜索、考试地图、打印/导出 PDF。</sub></p>
 
 ## Quick start
 
