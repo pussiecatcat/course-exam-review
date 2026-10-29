@@ -6,6 +6,31 @@
 
 不是“把 PPT 压缩一遍”，而是按考试的方式重新组织：**哪些必须背、公式怎么来的、例题怎么下手、哪里最容易错、还剩几天怎么安排。**
 
+<p align="center">
+  <img src="docs/preview-pdf.png" width="49%" alt="Generated A4 lecture notes: chapter page and worked example with figure">
+  <img src="docs/preview-html.png" width="49%" alt="Offline HTML review site with sidebar, search and exam map">
+</p>
+
+<p align="center"><sub>左：生成的 A4 讲义（章节页 + 例题/图表页）；右：离线网页（侧栏目录、搜索、考试地图）。</sub></p>
+
+## Quick start
+
+```bash
+git clone https://github.com/pussiecatcat/course-exam-review.git ~/.claude/skills/course-exam-review
+cd ~/.claude/skills/course-exam-review
+python -m pip install -r requirements.txt
+```
+
+Windows PowerShell：
+
+```powershell
+git clone https://github.com/pussiecatcat/course-exam-review.git "$HOME\.claude\skills\course-exam-review"
+cd "$HOME\.claude\skills\course-exam-review"
+python -m pip install -r requirements.txt
+```
+
+然后在 Claude Code 里输入 `/course-exam-review`，把课件文件夹指给它。完整安装、可选依赖和输入说明见下方「安装」。
+
 ---
 
 ## 为什么做这个
@@ -32,7 +57,7 @@
 | **速查资料** | 核心概念、公式、易混点、常见错误四张表 + 考前 10 分钟清单 |
 | **复习计划** | 按考试日期、每日可用时长、知识点优先级和前置依赖排程，预留 20% 自测/错题 |
 | **覆盖与待核对** | 每一页课件归到哪一节；无法确认的公式/图/文字单独列出 |
-| **可重编译源文件** | Markdown、图片、meta、脚本、模板、离线 KaTeX；一条命令重新生成 PDF |
+| **可重编译源文件** | Markdown、图片、meta、脚本、模板、离线 KaTeX；用附带脚本重新生成 PDF |
 
 ---
 
@@ -57,8 +82,10 @@
 需要 Python 3.10+、Claude Code，以及：
 
 ```bash
-python -m pip install pymupdf python-pptx python-docx pillow
+python -m pip install -r requirements.txt
 ```
+
+`requirements.txt` 包含 PyMuPDF、python-pptx、python-docx、Pillow；Windows 上还包含用于 PowerPoint 渲染的 `pywin32`。
 
 把仓库克隆到 Claude Code 的用户级 skill 目录：
 
@@ -201,6 +228,8 @@ references/              # 内容模板、考试画像、流程、交付物、�
 scripts/                 # ingest / build / print_pdf / check / plan / coverage / selftest / package
 assets/                  # style.css / app.js / 离线 KaTeX
 templates/               # HTML 模板、考试画像与知识点表示例
+docs/                    # README 预览图
+requirements.txt         # Python 依赖
 VALIDATION.md            # 验证报告
 ```
 

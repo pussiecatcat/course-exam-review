@@ -41,6 +41,19 @@ course-review/
 
 如果用户只要其中一部分，按需交付；默认全部生成。
 
+## 依赖
+
+Python 3.10+。在本仓库根目录：
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+- 必需：PyMuPDF、python-pptx、python-docx、Pillow。
+- Windows 额外：`pywin32`（PowerPoint COM 渲染）。
+- 可选：`opencv-python`（PPT 内嵌视频抽帧）。
+- PDF 导出需要 Edge 或 Chrome；没有 PowerPoint 时用 LibreOffice 渲染 PPT。
+
 ## 二、工作目录
 
 中间产物放 `.review/`：
