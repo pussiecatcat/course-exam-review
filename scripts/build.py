@@ -562,7 +562,7 @@ def build_cover(meta: dict, sections: list[dict], figure_count: int, minimal: bo
   <div class="cover-meta">{" · ".join(html_lib.escape(x) for x in meta_bits)}</div>
   <div class="cover-stats">{stat_html}</div>
   <div class="cover-note">
-    <strong>怎么用：</strong>先看「考试地图」分配时间；每节先读三句话结论，再补公式与例题；
+    <strong>怎么用：</strong>先看「考试地图」分配时间；每个知识点先读“为什么需要它”和“直觉”，再看公式阐述与例题，最后用“小结”回顾；
     自测题答案默认折叠，先自己写再展开。
   </div>
 </header>

@@ -11,6 +11,7 @@ selftest.py — 校验英文自测题/答案，生成互动题库
 检查:
     - Q/A 编号一一对应
     - 题干英文、解析中文、参考答案英文
+    - 中文思路含 题型判断 / 方法与条件 / 步骤 / 检查 四部分，且不少于 80 个汉字
     - 来源标记存在；自编题标【自测·生成】
     - 题目文件不含答案
 """
@@ -69,6 +70,20 @@ def has_english(s: str, n: int = 10) -> bool:
 
 def cjk_count(s: str) -> int:
     return len(re.findall(r"[一-鿿]", s))
+
+
+ANALYSIS_PARTS = ["题型判断", "方法与条件", "步骤", "检查"]
+MIN_ANALYSIS_CJK = 80
+
+
+def missing_analysis_parts(analysis: str) -> list[str]:
+    """中文思路必须含四个带标签的部分：**题型判断** / **方法与条件** / **步骤** / **检查**。"""
+    missing = []
+    for label in ANALYSIS_PARTS:
+        pat = rf"\*\*\s*{re.escape(label)}\s*[：:]?\s*\*\*|^\s*(?:[-*]\s*)?{re.escape(label)}\s*[：:]"
+        if not re.search(pat, analysis, flags=re.M):
+            missing.append(label)
+    return missing
 
 
 def source_marker_ok(source: str) -> tuple[bool, str]:
@@ -131,8 +146,12 @@ def build_bank(qblocks: dict[str, dict], ablocks: dict[str, dict]) -> tuple[list
             errors.append(f"{qid}: 题干英文不足（至少 20 个英文字母）")
         if not analysis:
             errors.append(f"{qid}: 缺少中文思路")
-        elif cjk_count(analysis) < 10:
-            errors.append(f"{qid}: 中文解析过少")
+        else:
+            if cjk_count(analysis) < MIN_ANALYSIS_CJK:
+                errors.append(f"{qid}: 中文解析过少（{cjk_count(analysis)} 个汉字，至少 {MIN_ANALYSIS_CJK}）")
+            miss = missing_analysis_parts(analysis)
+            if miss:
+                errors.append(f"{qid}: 中文思路缺少部分：" + "、".join(miss))
         if not answer:
             errors.append(f"{qid}: 缺少英文参考答案")
         elif not has_english(answer, 20):
