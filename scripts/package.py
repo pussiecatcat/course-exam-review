@@ -9,7 +9,7 @@ package.py — 打包可重新编译的源文件
 生成:
     course-review/source/
       content/ figures/ meta.json exam_profile.json knowledge_points.csv
-      outline.md coverage.csv TO_VERIFY.md
+      outline.md coverage.csv TO_VERIFY.md calc/
       scripts/ templates/ assets/
       README.md
 """
@@ -96,6 +96,7 @@ def write_readme(source: Path, course: str) -> None:
 - `outline.md`：知识地图
 - `coverage.csv`：每一页 → 讲义哪一节
 - `TO_VERIFY.md`：待核对清单
+- `calc/`：每个知识点的数值复算脚本（`python calc/kp-2-3.py`）
 - `scripts/`：build / print_pdf / check / plan / coverage / selftest
 - `templates/report.html`：HTML 模板
 - `assets/`：样式、脚本、KaTeX（离线可用）
@@ -226,6 +227,9 @@ def main() -> int:
                 warnings.append(f"缺少 {name}，源文件无法直接编译")
             else:
                 warnings.append(f"缺少 {name}（可选）")
+
+    # 3b) 数值复算脚本
+    copy_if_exists(work / "calc", source / "calc")
 
     # 4) copy scripts / templates / assets
     scripts_src = skill / "scripts"

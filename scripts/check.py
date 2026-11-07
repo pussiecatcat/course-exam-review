@@ -113,6 +113,85 @@ def check_math(text: str) -> tuple[bool, str]:
     return True, ""
 
 
+# ---------------------------------------------------------------- depth
+# 与 references/content-template.md 第四、五节一致；按标题子串匹配，允许带节号。
+KP_SECTIONS_FULL = ["为什么需要它", "直觉", "定义", "典型例题", "与其他知识点的联系",
+                    "常见误解", "考试怎么写", "小结", "来源"]
+KP_SECTIONS_C = ["为什么需要它", "直觉", "定义", "小结"]
+FORMULA_PARTS_FULL = ["公式本体", "符号表", "逐项含义", "推导", "单位检查", "特例与极限",
+                      "数值演示", "适用条件", "变形与反解", "使用说明书"]
+FORMULA_PARTS_C = ["公式本体", "符号表", "逐项含义", "适用条件"]
+EXEMPT_H2 = re.compile(r"本章在课程中的位置|本章小结|^\s*[\d.]*\s*小结\s*$|^\s*[\d.]*\s*来源\s*$|符号表|参考资料|本章导读")
+BANNED_PHRASES = ["易得", "显然", "同理可得"]
+
+
+def frontmatter(text: str) -> dict:
+    m = re.match(r"^---\s*\n(.*?)\n---", text.replace("\r\n", "\n"), flags=re.S)
+    out = {}
+    if m:
+        for line in m.group(1).splitlines():
+            if ":" in line:
+                k, v = line.split(":", 1)
+                out[k.strip()] = v.strip().strip("\"'")
+    return out
+
+
+def split_blocks(text: str, level: int) -> list[tuple[str, str]]:
+    """按指定级别标题切块，返回 [(标题, 块内容)]；标题前的内容忽略。"""
+    pat = re.compile(rf"^{'#' * level}\s+(.+?)\s*$", re.M)
+    ms = list(pat.finditer(text))
+    return [(m.group(1), text[m.end(): ms[i + 1].start() if i + 1 < len(ms) else len(text)])
+            for i, m in enumerate(ms)]
+
+
+def heading_titles(text: str, level: int) -> list[str]:
+    return [m.group(1) for m in re.finditer(rf"^{'#' * level}\s+(.+?)\s*$", text, flags=re.M)]
+
+
+def depth_issues(text: str, strict: bool) -> list[str]:
+    """检查讲义深度：知识点十段 + 每个公式阐述的各段。返回问题列表。"""
+    body = strip_code(text)
+    issues: list[str] = []
+    kp_req = KP_SECTIONS_FULL if strict else KP_SECTIONS_C
+    f_req = FORMULA_PARTS_FULL if strict else FORMULA_PARTS_C
+    for h2, block in split_blocks(body, 2):
+        if EXEMPT_H2.search(h2) or "<!-- no-depth-check -->" in block:
+            continue
+        h3 = heading_titles(block, 3)
+        miss = [k for k in kp_req if not any(k in t for t in h3)]
+        if miss:
+            issues.append(f"「{h2}」缺少段落：" + "、".join(miss))
+        cards = [(t, b) for t, b in split_blocks(block, 3) if "公式阐述" in t]
+        if "$$" in block and not cards:
+            issues.append(f"「{h2}」有独立公式但没有“公式阐述”")
+        for t, b in cards:
+            h4 = heading_titles(b, 4)
+            fm = [k for k in f_req if not any(k in x for x in h4)]
+            if fm:
+                issues.append(f"「{h2} / {t}」缺少：" + "、".join(fm))
+    return issues
+
+
+def banned_phrases(text: str) -> list[str]:
+    body = strip_code(text)
+    return [f"“{w}”× {body.count(w)}" for w in BANNED_PHRASES if body.count(w)]
+
+
+def run_calc_scripts(work: Path) -> tuple[int, list[str]]:
+    calc = work / "calc"
+    scripts = sorted(calc.glob("*.py")) if calc.is_dir() else []
+    failed = []
+    for s in scripts:
+        try:
+            p = subprocess.run([sys.executable, str(s)], capture_output=True, text=True,
+                               encoding="utf-8", errors="replace", timeout=60, cwd=str(calc))
+            if p.returncode != 0:
+                failed.append(f"{s.name}: " + ((p.stderr or p.stdout).strip().splitlines() or ["退出码非 0"])[-1])
+        except Exception as e:
+            failed.append(f"{s.name}: {e}")
+    return len(scripts), failed
+
+
 def pdf_text(path: Path) -> str:
     try:
         import pymupdf
@@ -256,6 +335,41 @@ def main() -> int:
                 window = "\n".join(lines[i + 1:i + 4])
                 if not re.search(r"^\s*\*|图注|图\s*\d", window, flags=re.M):
                     image_no_caption += 1
+
+    # ---------------------------------------------------------------- depth
+    depth_fail = depth_warn = 0
+    has_numeric_demo = False
+    for f in files:
+        if re.match(r"^(00|01|90|91|92|93|94)", f.name):
+            continue
+        text = f.read_text(encoding="utf-8")
+        if "数值演示" in text:
+            has_numeric_demo = True
+        pri = frontmatter(text).get("priority", "").strip().upper()
+        strict = pri in {"A", "B"}
+        bp = banned_phrases(text)
+        if strict and bp:
+            r.wa(f"跳步用语：{f.name}", "、".join(bp) + "；推导应写出每一步")
+        issues = depth_issues(text, strict)
+        if not issues:
+            continue
+        shown = "；".join(issues[:6]) + (f" …（共 {len(issues)} 项）" if len(issues) > 6 else "")
+        if strict:
+            depth_fail += 1
+            r.bad(f"讲解深度：{f.name}（优先级 {pri}）", shown)
+        else:
+            depth_warn += 1
+            r.wa(f"讲解深度：{f.name}（优先级 {pri or '未标'}）", shown)
+    if depth_fail == 0 and depth_warn == 0:
+        r.ok("讲解深度", "知识点十段与公式阐述齐全")
+
+    n_calc, calc_failed = run_calc_scripts(work)
+    if calc_failed:
+        r.bad("数值复算脚本", "；".join(calc_failed[:5]))
+    elif n_calc:
+        r.ok("数值复算脚本", f"{n_calc} 个全部运行通过")
+    elif has_numeric_demo:
+        r.bad("数值复算脚本", "讲义有“数值演示”，但 .review/calc/ 下没有复算脚本")
 
     if total_math_bad == 0:
         r.ok("公式定界符", "全部成对")
